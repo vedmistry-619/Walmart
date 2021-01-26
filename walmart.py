@@ -81,3 +81,39 @@ for store in range(1, 46):
     for dept in range(1, 100):
         current_key = str(store) + "," + str(dept)
         sales_dict[current_key] = 0
+result = sm.ols(formula="Weekly_Sales ~ isHoliday + Fuel_Price + Temperature + Size + MarkDown1 + MarkDown2 + MarkDown3 + MarkDown4 + MarkDown5 + CPI + Unemployment + Week_Number", data=master_df[(master_df['Store'] == 1) & (master_df['Dept'] == 1)]).fit()
+result.summary()
+
+store_cols = [col for col in master_df if col.startswith('Store_')]
+weeks_cols = [col for col in master_df if col.startswith('Week_Number_')]
+dept_cols = [col for col in master_df if col.startswith('Dept_')]
+
+equals_to_str = ""
+
+for i in range(len(store_cols)):
+    equals_to_str = equals_to_str + str(store_cols[i]) + " + "
+    
+for i in range(len(weeks_cols)):
+    equals_to_str = equals_to_str + str(weeks_cols[i]) + " + "
+    
+for i in range(len(dept_cols)):
+    equals_to_str = equals_to_str + str(dept_cols[i]) + " + "
+    
+equals_to_str = "Weekly_Sales ~ " + equals_to_str + "isHoliday + Fuel_Price + Temperature + Size + MarkDown1 + MarkDown2 + MarkDown3 + MarkDown4 + MarkDown5 + CPI + Unemployment"
+
+result = sm.ols(formula = equals_to_str, data=master_df).fit()
+print(result.summary())
+
+store_cols = [col for col in master_df if col.startswith('Store_')]
+
+equals_to_str = ""
+
+for i in range(len(store_cols)):
+    equals_to_str = equals_to_str + str(store_cols[i]) + " + "
+    
+equals_to_str = "Weekly_Sales ~ " + equals_to_str + "isHoliday + Fuel_Price + Temperature + Size + MarkDown1 + MarkDown2 + MarkDown3 + MarkDown4 + MarkDown5 + CPI + Unemployment"
+
+result = sm.ols(formula = equals_to_str, data=master_df).fit()
+print(result.summary())
+
+predict_array = result.predict()
